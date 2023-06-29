@@ -1,0 +1,130 @@
+/*INSERT INTO DIM_LOCATION*/
+USE GroupDW
+Go
+
+SET IDENTITY_INSERT DIM_Location OFF
+
+INSERT INTO DIM_Location
+	( City,Country,State )
+
+select Distinct City, Country,State
+From STAGE_Orders
+where Record_Location_Exists = 'N'
+
+
+
+/*INSERT INTO DIM_CUSTOMER*/
+USE GroupDW
+Go
+
+SET IDENTITY_INSERT DIM_Customer OFF
+
+INSERT INTO DIM_Customer
+	( CustomerID,Customer_Name,Segment)
+
+select Distinct CustomerID,CustomerName,Segment
+From STAGE_Orders
+where Record_Customer_Exists = 'N'
+
+
+
+/*INSERT INTO DIM_ORDER*/
+USE GroupDW
+Go
+
+SET IDENTITY_INSERT DIM_Orders OFF
+
+INSERT INTO DIM_Orders
+	( Order_ID,Order_Priority,Ship_Mode,Ship_date,Order_date)
+
+select Distinct OrderID,OrderPriority,ShipMode,ShipDate,OrderDate
+From STAGE_ORDERS
+where Record_Orders_Exists = 'N'
+
+
+/*INSERT INTO DIM_PRODUCT*/
+USE GroupDW
+Go
+
+SET IDENTITY_INSERT DIM_PRODUCT OFF
+
+INSERT INTO DIM_PRODUCT
+	( Product_ID,Product_name,Category,Sub_Category)
+
+select Distinct ProductID,ProductName,Category,Sub_Category
+From STAGE_ORDERS
+where Record_Product_Exists = 'N'
+
+
+
+
+/*Alter Table 1*/
+
+UPDATE    STAGE_Orders
+SET      Customer_WK  = C.Customer_WK
+FROM 
+STAGE_ORDERS S,  DIM_CUSTOMER C
+
+WHERE S.CustomerID = C.CustomerID
+
+
+UPDATE    STAGE_Orders
+SET      Location_WK  = L.Loc_wk
+FROM 
+STAGE_ORDERS S,  DIM_LOCATION L
+
+WHERE S.City = L.City
+
+UPDATE    STAGE_ORDERS
+SET      Product_WK  = P.Product_wk
+FROM 
+STAGE_ORDERS S,  DIM_PRODUCT P
+
+WHERE S.ProductID = P.Product_ID
+
+
+UPDATE    STAGE_Orders
+SET      Order_WK  = O.Order_WK
+FROM 
+STAGE_ORDERS S,  DIM_Orders O
+
+WHERE S.OrderID = O.Order_ID
+
+
+/*Table 2*/
+
+USE GroupDW
+GO
+
+UPDATE STAGE_ORDERS
+SET
+    Record_Customer_Exists = 'Y'
+FROM STAGE_ORDERS S, DIM_CUSTOMER C
+WHERE 
+S.CustomerID = C.CustomerID
+
+UPDATE STAGE_ORDERS
+SET
+    Record_Location_Exists = 'Y'
+FROM STAGE_ORDERS S, DIM_LOCATION L
+WHERE 
+S.City = L.City
+
+UPDATE STAGE_ORDERS
+SET
+    Record_Product_Exists = 'Y'
+FROM STAGE_ORDERS S, DIM_PRODUCT P
+WHERE 
+S.ProductID = P.Product_ID
+
+UPDATE STAGE_ORDERS
+SET
+    Record_Orders_Exists = 'Y'
+FROM STAGE_ORDERS S, DIM_Orders O
+WHERE 
+S.OrderID = O.Order_ID
+
+
+
+
+ 
