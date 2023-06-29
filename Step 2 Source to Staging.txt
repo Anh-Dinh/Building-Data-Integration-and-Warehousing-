@@ -1,0 +1,71 @@
+USE GroupDW
+Go
+Truncate TABLE dbo.STAGE_Orders
+Use GroupDW
+Go
+
+
+SET ANSI_WARNINGS OFF
+Insert into dbo.STAGE_Orders(
+	OrderID,
+	OrderDate,
+	ShipDate,
+	ShipMode,
+	CustomerID,
+	CustomerName,
+	Segment, 
+	City, 
+	State, 
+	Country, 
+	ProductID,
+	Category,
+	Sub_category,
+	ProductName,
+	Sales,
+	Quantity,
+	Discount,
+	Profit,
+	ShippingCost,
+	OrderPriority,
+	Response
+)
+select 
+	e.[Order_ID] ,
+	e.[Order_Date] ,
+	e.[Ship_Date] ,
+	e.[Ship_Mode] ,
+	e.[Customer_ID],
+	e.[Customer_Name] ,
+	e.[Segment] ,
+	e.[City] ,
+	e.[State] ,
+	e.[Country] ,
+	e.[Product_ID] ,
+	e.[Category] ,
+	e.[Sub_Category] ,
+	e.[Product_Name] ,
+	e.[Sales] ,
+	e.[Quantity] ,
+	e.[Discount] ,
+	e.[Profit] ,
+	e.[Shipping_Cost] ,
+	e.[Order_Priority] ,
+	datediff(dd,e.[Order_Date],e.[Ship_Date])
+	
+	
+
+from GroupOP.dbo.Orders as e 
+where e.[Order_Date] between '01/01/2011' and '12/31/2011' 
+SET ANSI_WARNINGS ON
+
+
+
+UPDATE   STAGE_Orders
+SET   Order_Date_WK =calendar_WK
+FROM   STAGE_Orders S, DIM_Calendar C
+WHERE   S.OrderDate = C.Calendar_nk;
+
+UPDATE   STAGE_Orders
+SET   Ship_Date_WK = calendar_WK
+FROM   STAGE_Orders S, DIM_Calendar C
+WHERE   S.ShipDate = C.Calendar_nk;
