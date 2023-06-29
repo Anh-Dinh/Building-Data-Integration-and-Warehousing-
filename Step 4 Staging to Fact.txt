@@ -1,0 +1,10 @@
+Use GroupDW
+GO
+Insert into FACT_Orders (Order_WK,Order_NK,Customer_WK,
+Order_Date_WK,Ship_Date_WK,Location_WK,Product_WK,
+Sales,Quantity,Discount,Profit,Shipping_Cost,
+Response)
+select Order_WK,OrderID,Customer_WK,Order_Date_WK,
+Ship_Date_WK,Location_WK,Product_WK,Sales,Quantity,
+Discount,Profit,ShippingCost,Response from STAGE_Orders
+
